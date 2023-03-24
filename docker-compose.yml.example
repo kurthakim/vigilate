@@ -12,7 +12,6 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
-      # - ./bin:/usr/local/bin # mount host directory to container
 
 volumes:
   pgdata:
