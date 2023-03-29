@@ -53,11 +53,11 @@ type Host struct {
 	Active        int
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
-	HostService   []HostService
+	HostServices  []HostService
 }
 
 // Services is the model for services
-type Service struct {
+type Services struct {
 	ID          int
 	ServiceName string
 	Active      int
@@ -78,5 +78,6 @@ type HostService struct {
 	LastCheck      time.Time
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
-	Service        Service
+	Service        Services
+	HostName       string
 }
