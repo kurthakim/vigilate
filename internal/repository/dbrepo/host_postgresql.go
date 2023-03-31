@@ -317,7 +317,17 @@ func (m *postgresDBRepo) UpdateHostService(hs models.HostService) error {
 		where 
 			id = $9`
 
-	_, err := m.DB.ExecContext(ctx, stmt)
+	_, err := m.DB.ExecContext(ctx, stmt,
+		hs.HostID,
+		hs.ServiceID,
+		hs.Active,
+		hs.ScheduleNumber,
+		hs.ScheduleUnit,
+		hs.LastCheck,
+		hs.Status,
+		hs.UpdatedAt,
+		hs.ID,
+	)
 	if err != nil {
 		return err
 	}
