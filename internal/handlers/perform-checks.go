@@ -33,7 +33,70 @@ type jsonResp struct {
 
 // ScheduledCheck performs a scheduled check on a host service by id
 func (repo *DBRepo) ScheduledCheck(hostServiceID int) {
+	log.Println("************** Running checkfor", hostServiceID)
 
+	hs, err := repo.DB.GetHostServiceByID(hostServiceID)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	h, err := repo.DB.GetHostByID(hs.HostID)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	// tests the service
+	newStatus, msg := repo.testServiceForHost(h, hs)
+
+	if newStatus != hs.Status {
+		repo.updateHostServiceStatusCount(h, hs, newStatus, msg)
+	}
+
+}
+
+func (repo *DBRepo) updateHostServiceStatusCount(h models.Host, hs models.HostService, newStatus, msg string) {
+	// if the host service status has changed, broadcast to all clients
+	// if hostServiceStatusChanged {
+	// 	data := make(map[string]string)
+	// 	data["message"] = fmt.Sprintf("host service %s on %s has changed to %s", hs.Service.ServiceName, h.HostName, newStatus)
+	// 	repo.broadcastMessage("public-channel", "host-service-status-changed", data)
+
+	// 	// if appropriate, send email or SMS message
+
+	// }
+
+	// update host service record in db with status (if changed) and last check
+	hs.Status = newStatus
+	hs.LastCheck = time.Now()
+	err := repo.DB.UpdateHostService(hs)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	pending, healthy, warning, problem, err := repo.DB.GetAllServiceStatusCounts()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	data := make(map[string]string)
+	data["healthy_count"] = strconv.Itoa(healthy)
+	data["pending_count"] = strconv.Itoa(pending)
+	data["problem_count"] = strconv.Itoa(problem)
+	data["warning_count"] = strconv.Itoa(warning)
+	repo.broadcastMessage("public-channel", "host-service-count-changed", data)
+
+	log.Println("New status is", newStatus, "and msg is", msg)
+}
+
+func (repo *DBRepo) broadcastMessage(channel, messageType string, data map[string]string) {
+	err := app.WsClient.Trigger(channel, messageType, data)
+	if err != nil {
+		log.Println(err)
+	}
 }
 
 // TestCheck manually tests a host s ervice and sends JSON response
@@ -107,6 +170,7 @@ func (repo *DBRepo) testServiceForHost(h models.Host, hs models.HostService) (st
 		break
 	}
 
+	// TODO - broadcast to clients if appropriate
 	return newStatus, msg
 }
 
