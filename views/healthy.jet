@@ -25,7 +25,7 @@
 <div class="row">
     <div class="col">
 
-        <table class="table table-condensed table-striped">
+        <table id="healthy-table" class="table table-condensed table-striped">
             <thead>
             <tr>
                 <th>Host</th>
@@ -38,7 +38,7 @@
               {{if len(services) > 0}}
                 {{range services}}
                   <tr>
-                    <td>
+                    <td id="host-service-{{.ID}}">
                       <a href="/admin/host/{{.HostID}}#healthy-content">
                         {{.HostName}}
                       </a>
@@ -52,7 +52,7 @@
                 {{end}}
               {{else}}
                 <tr>
-                  <td colspan="4">No services</td>
+                  <td colspan="3">No services</td>
                 </tr>
               {{end}}
             </tbody>
