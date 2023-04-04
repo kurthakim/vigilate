@@ -62,9 +62,9 @@ func (repo *DBRepo) StartMonitoring() {
 			payload["host_service_id"] = strconv.Itoa(x.ID)
 			yearOne := time.Date(0001, 11, 17, 20, 34, 58, 65138737, time.UTC)
 			if app.Scheduler.Entry(app.MonitorMap[x.ID]).Next.After(yearOne) {
-				payload["next_run"] = app.Scheduler.Entry(app.MonitorMap[x.ID]).Next.Format("2006-01-02 3:04:05 PM")
+				data["next_run"] = app.Scheduler.Entry(app.MonitorMap[x.ID]).Next.Format("2006-01-02 3:04:05 PM")
 			} else {
-				payload["next_run"] = "Pending...."
+				data["next_run"] = "Pending...."
 			}
 			payload["host"] = x.HostName
 			payload["service"] = x.Service.ServiceName

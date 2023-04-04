@@ -9,6 +9,7 @@ import (
 	"github.com/pusher/pusher-http-go"
 )
 
+// PusherAuth authenticates the user to our pusher server
 func (repo *DBRepo) PusherAuth(w http.ResponseWriter, r *http.Request) {
 	userID := repo.App.Session.GetInt(r.Context(), "userID")
 

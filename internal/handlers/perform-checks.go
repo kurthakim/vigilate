@@ -14,8 +14,11 @@ import (
 )
 
 const (
+	// HTTP is the unencrypted web service check
 	HTTP           = 1
+	// HTTPS is the encrypted web service check
 	HTTPS          = 2
+	//SSLCertificate is ssl certificate check
 	SSLSertificate = 3
 )
 
@@ -152,6 +155,7 @@ func (repo *DBRepo) TestCheck(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// testServiceForHost tests a service for a host
 func (repo *DBRepo) testServiceForHost(h models.Host, hs models.HostService) (string, string) {
 	var msg, newStatus string
 
@@ -181,6 +185,7 @@ func (repo *DBRepo) testServiceForHost(h models.Host, hs models.HostService) (st
 	return newStatus, msg
 }
 
+// testHTTPForHost tests HTTP service
 func testHTTPForHost(url string) (string, string) {
 	if strings.HasSuffix(url, "/") {
 		url = strings.TrimSuffix(url, "/")

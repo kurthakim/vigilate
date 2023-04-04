@@ -30,7 +30,6 @@
                 <tr>
                     <th>Host</th>
                     <th>Service</th>
-                    <th>Status</th>
                     <th>Message</th>
                 </tr>
                 </thead>
@@ -44,9 +43,6 @@
                           </a>
                         </td>
                         <td>{{.Service.ServiceName}}</td>
-                        <td>
-                          <span class="badge bg-secondary-dark">{{.Status}}</span>
-                        </td>
                         <td></td>
                       </tr>
                     {{end}}

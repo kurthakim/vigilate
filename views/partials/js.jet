@@ -6,7 +6,7 @@
     wsHost: "localhost",
     wsPort: 4001,
     forceTLS: false,
-    enabledTransports: [ "ws", "wss" ],
+    enabledTransports: ["ws", "wss"],
     disabledTransports: []
   });
 
@@ -21,6 +21,7 @@
   })
 
   publicChannel.bind("host-service-status-changed", function(data) {
+  	// alert user to status change with toast
     attention.toast({
       msg: data.message,
       icon: 'info',
@@ -37,9 +38,9 @@
 
   function deleteHostServiceRow(hostServiceID) {
     // remove existing table row if it exist
-    let exists = !!document.getElementById("host-service-" + data.host_service_id)
+    let exists = !!document.getElementById("host-service-" + hostServiceID)
     if (exists) {
-      let row = document.getElementById("host-service-" + data.host_service_id);
+      let row = document.getElementById("host-service-" + hostServiceID);
       row.parentNode.removeChild(row);
 
       // if this was the last row, add a "no services" row
@@ -106,12 +107,8 @@
 
       // insert third td(currently empty)
       newRow.insertCell(2);
-
-
     }
-
   }
-
   publicChannel.bind("host-service-count-changed", function(data) {
     let healthyCountExists = !!document.getElementById("healthy_count");
     if (healthyCountExists) {
@@ -170,7 +167,6 @@
       }
     }
 
-
     document.getElementById("monitoring-live").addEventListener("change", function () {
       let enabled = document.getElementById("monitoring-live").checked;
       if (!enabled) {
@@ -196,13 +192,13 @@
 
   function updateSystemPref(prefName, prefValue) {
     let formData = new FormData();
-    formData.append("pref_name", prefName)
-    formData.append("pref_value", prefValue)
-    formData.append("csrf_token", "{{.CSRFToken}}")
+    formData.append("pref_name", prefName);
+    formData.append("pref_value", prefValue);
+    formData.append("csrf_token", "{{.CSRFToken}}");
     let ajax = new XMLHttpRequest();
     ajax.responseType = "json";
-    ajax.open("POST", "/admin/preference/ajax/set-system-pref")
-    ajax.send(formData)
+    ajax.open("POST", "/admin/preference/ajax/set-system-pref");
+    ajax.send(formData);
     ajax.onreadystatechange = function() {
       if (ajax.readyState === 4) {
         let resp = ajax.response;
@@ -216,7 +212,7 @@
   function toggleMonitoring(enabled) {
     let formData = new FormData();
     formData.append("enabled", enabled)
-    formData.append("csrf_token", "{{.CSRFToken}}")
+    formData.append("csrf_token", "{{.CSRFToken}}");
     let ajax = new XMLHttpRequest();
     ajax.responseType = "json";
     ajax.open("POST", "/admin/preference/ajax/toggle-monitoring")
