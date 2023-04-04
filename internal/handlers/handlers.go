@@ -383,12 +383,25 @@ func (repo *DBRepo) ToggleServiceForHost(w http.ResponseWriter, r *http.Request)
 	serviceID, _ := strconv.Atoi(r.Form.Get("service_id"))
 	active, _ := strconv.Atoi(r.Form.Get("active"))
 
-
-
 	err = repo.DB.UpdateHostServiceStatus(hostID, serviceID, active)
 	if err != nil {
 		log.Println(err)
 		resp.OK = false
+	}
+
+	// broadcast service status has changed
+	hs, _ := repo.DB.GetHostServiceByHostIDServiceID(hostID, serviceID)
+	h, _ := repo.DB.GetHostByID(hostID)
+
+	// add or remove host service from schedule
+	if active == 1 {
+		// add to schedule
+		repo.pushScheduleChangedEvent(hs, "pending")
+		repo.pushStatusChangedEvent(h, hs, "pending")
+		repo.addToMonitorMap(hs)
+	} else {
+		// remove from schedule
+		repo.removeFromMonitorMap(hs)
 	}
 
 	out, _ := json.MarshalIndent(resp, "", "\t")
